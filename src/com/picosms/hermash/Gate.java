@@ -22,7 +22,7 @@ public class Gate extends HttpServlet {
 	private SMSGate gate;
     private String buffer;
 	public Gate() {
-        gate = new SMSGate(new Auth("380939598754", "smspass937"));
+        gate = new SMSGate(new Auth("380939ХХХХХХ", "smspass937"));
         buffer = "";
     }
 
