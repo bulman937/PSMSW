@@ -3,6 +3,7 @@ package com.picosms.hermash;
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -47,13 +48,17 @@ public class Gate extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			String apiResponce = "";
-			if(request.getParameter("type").equals("single")) {
-				try {
-					apiResponce = gate.sendSMS(request.getParameter("tel"), 
-											   request.getParameter("text"));
-				} catch (Exception e) {
-					e.printStackTrace();
+			try {
+				if(request.getParameter("type").equals("single")) {
+					apiResponce = gate.sendSMS(request.getParameter("text"), 
+											   request.getParameter("tel"));
 				}
+				else if(request.getParameter("type").equals("batch")){
+					System.out.println(request.getParameter("file"));
+				
+				}
+			} catch (Exception e) {
+					e.printStackTrace();
 			}
 			System.out.println(request.getParameter("tel"));
 			System.out.println(request.getParameter("text"));
@@ -62,4 +67,5 @@ public class Gate extends HttpServlet {
 			doGet(request, response);
 	}
 }
+
 

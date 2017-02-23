@@ -1,2 +1,0 @@
-balance;<request><operation>GETBALANCE</operation></request>
-message;<?xml version="1.0" encoding="utf-8"?><request><operation>SENDSMS</operation><message start_time="AUTO" end_time="AUTO" lifetime="4" rate="1" desc="id" source="SMS"><body>{message}</body><recipient>{recipient}</recipient></message></request>

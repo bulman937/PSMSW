@@ -1,29 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>SMS Gate</title>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+ $(function() {
+
+  // We can attach the `fileselect` event to all file inputs on the page
+  $(document).on('change', ':file', function() {
+    var input = $(this),
+        numFiles = input.get(0).files ? input.get(0).files.length : 1,
+        label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+    input.trigger('fileselect', [numFiles, label]);
+  });
+
+  // We can watch for our custom `fileselect` event like this
+  $(document).ready( function() {
+      $(':file').on('fileselect', function(event, numFiles, label) {
+
+          var input = $(this).parents('.input-group').find(':text'),
+              log = numFiles > 1 ? numFiles + ' files selected' : label;
+
+          if( input.length ) {
+              input.val(log);
+          } else {
+              if( log ) alert(log);
+          }
+
+      });
+  });
+  
+});
+</script>
 </head>
 <body>
-<h1>${balance}</h1>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">PicoSMS</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="#">Send SMS</a></li>
+      <li><a href="#">Send Email</a></li>
+
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Log-out</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+<h1>Balance: ${balance} UAH</h1>
 ${buffer}
 <h1>Send single SMS</h1>
+
 <form action="gate" method="POST" name="singleForm">
+<div class="form-group">
 	<input name="type" type="hidden" value="single">
-	Target number
-	<input name="tel" type="tel">
-	Text
-	<input name="text" type="text">
-	<input type="submit">
+    <label for="phone">Phone:</label>
+    <input name="tel" class="form-control" id="phone" placeholder="Enter phone number">
+    <label for="text">Text:</label>
+    <textarea name="text" class = "form-control" rows = "3"></textarea>
+    <br>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</div>
 </form>
+
 <h1>Send batch SMS</h1>
 <form action="gate" method="POST" name="batchForm">
+<div class="form-group">
     <input type="hidden" name="type" value="batch" />
-	CSV
-	<input type="file">
-	Supports {} by col formatting
-	<input type="text">
-	<input type="submit">
+    <label class="control-label">Select File</label> 
+            <div class="input-group">
+                <label class="input-group-btn">
+                    <span class="btn btn-primary">
+                        Browse&hellip; <input name="file" type="file" style="display: none;" multiple>
+                    </span>
+                </label>
+                <input type="text" class="form-control" readonly>
+            </div>
+    <label class="control-label">Supports {} by col formatting</label>
+    <textarea name="text" class = "form-control" rows = "3"></textarea>
+    <br>
+	<button type="submit" class="btn btn-primary">Submit</button>
+
+</div>
 </form>
+
+</div>
 </body>
 </html>
