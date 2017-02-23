@@ -40,6 +40,7 @@ public class SMSGate {
 			HttpsURLConnection con = (HttpsURLConnection) targetAPIURL.openConnection();
 			con.setRequestMethod("POST");
 			con.setRequestProperty("Authorization", auth.getHtmlAuthCredentials());
+			System.out.println(String.format("[REQUEST] SEND: %s", xmlPayload));
 			con.setDoInput(true);
 			con.setDoOutput(true);
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
@@ -54,7 +55,8 @@ public class SMSGate {
 			while ((inputLine = in.readLine()) != null) {
 				response.append(inputLine);
 			}
-	
+			System.out.println(String.format("[REQUEST] GOT: %s", response));
+
 			in.close();
 			return response;
 	}
