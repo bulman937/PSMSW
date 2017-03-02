@@ -1,4 +1,6 @@
-package com.picosms.hermash;
+package com.picosms.hermash.impl;
+
+import com.picosms.hermash.ifaces.IAuth;
 
 /**
  * Represents username and password auth
@@ -6,7 +8,7 @@ package com.picosms.hermash;
  * 
  */
 
-public class Auth {
+public class Auth implements IAuth {
 	private String username;
 	private String password;
 	
@@ -20,27 +22,43 @@ public class Auth {
 		this.password = password;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.picosms.hermash.IAuth#getUsername()
+	 */
+	@Override
 	public String getUsername(){
 		return username;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.picosms.hermash.IAuth#getPassword()
+	 */
+	@Override
 	public String getPassword(){
 		return password;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.picosms.hermash.IAuth#setUsername(java.lang.String)
+	 */
+	@Override
 	public void setUsername(String value){
 		username = value;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.picosms.hermash.IAuth#setPassword(java.lang.String)
+	 */
+	@Override
 	public void setPassword(String value){
 		password = value;
 	}
 	
-	/**
-	 * Represent HTTP basic auth creds
-	 * @return Base64encoded string
+	/* (non-Javadoc)
+	 * @see com.picosms.hermash.IAuth#getHtmlAuthCredentials()
 	 */
 	
+	@Override
 	public String getHtmlAuthCredentials(){
 		return  "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(
 		        String.format("%s:%s", getUsername(), getPassword()).getBytes());

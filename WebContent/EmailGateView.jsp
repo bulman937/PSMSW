@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>SMS Gate</title>
+<title>Email Gate</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -54,39 +54,45 @@
   </div>
 </nav>
 <div class="container">
-<h1>Balance: ${balance} UAH</h1>
-<code>${buffer}</code>
+<h1>Limit ${limit} E-mail's overtime</h1>
+${buffer}
 <h1>Send single SMS</h1>
 
-<form action="sms" method="POST" name="singleForm">
+<form action="email" method="POST" name="singleForm">
 <div class="form-group">
 	<input name="type" type="hidden" value="single">
-    <label for="phone">Phone:</label>
-    <input name="tel" class="form-control" id="phone" placeholder="Enter phone number">
+    <label for="email">Email:</label>
+    <input name="email" class="form-control" 
+    		id="phone" placeholder="Enter phone number">
     <label for="text">Text:</label>
     <textarea name="text" class = "form-control" rows = "3"></textarea>
     <br>
-	<button type="submit" class="btn btn-primary">Submit</button>
+	<button type="submit" class="btn btn-success">Submit</button>
 </div>
 </form>
 
-<h1>Send batch SMS</h1>
-<form action="sms" method="POST" name="batchForm" enctype="multipart/form-data" >
+<h1>Send batch Email</h1>
+<form action="email" method="POST" name="batchForm" 
+					enctype="multipart/form-data" >
 <div class="form-group">
     <input type="hidden" name="type" value="batch" />
     <label class="control-label">Select File</label> 
             <div class="input-group">
                 <label class="input-group-btn">
-                    <span class="btn btn-primary">
-                        Browse&hellip; <input name="_file" type="file" style="display: none;" multiple>
+                    <span class="btn btn-success">
+                        Browse&hellip; <input name="_file" type="file" 
+                        style="display: none;" multiple>
                     </span>
                 </label>
                 <input type="text" class="form-control" readonly>
             </div>
+    <label class="control-label">Topic</label>            
+    <textarea name="topic" class = "form-control" rows = "1"></textarea>
+    <br>
     <label class="control-label">Supports {} by col formatting</label>
     <textarea name="text" class = "form-control" rows = "3"></textarea>
     <br>
-	<button type="submit" class="btn btn-primary">Submit</button>
+	<button type="submit" class="btn btn-success">Submit</button>
 
 </div>
 </form>

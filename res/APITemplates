@@ -1,2 +1,4 @@
 balance;<request><operation>GETBALANCE</operation></request>
 message;<?xml version="1.0" encoding="utf-8"?><request><operation>SENDSMS</operation><message start_time="AUTO" end_time="AUTO" lifetime="4" rate="1" desc="id" source="SMS"><body>%1$s</body><recipient>%2$s</recipient></message></request>
+batch;<?xml version="1.0" encoding="utf-8"?><request><operation>SENDSMS</operation><message start_time="AUTO" end_time="AUTO" lifetime="4" rate="120" desc="My first individual campaign" source="SMS" type="individual">%1$s</request>
+batchentry;<recipient>%1$s</recipient><body>%2$s</body>
