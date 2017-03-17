@@ -83,10 +83,16 @@ public class EmailGateServlet extends HttpServlet {
 		String apiResponce = "";
 		try {
 			if(request.getParameter("type").equals("single")) {
+<<<<<<< HEAD
 				String target = request.getParameter("email");
 				String text = request.getParameter("text");
 				String topic = request.getParameter("topic");
 				apiResponce = gate.sendMessage(target, text, topic);
+=======
+				apiResponce = gate.sendMessage(request.getParameter("email"),
+												request.getParameter("text"), 
+												"Topic");
+>>>>>>> 3e2096322c255169e189b2a88f8e627f9b80df3b
 			}
 			else if(request.getParameter("type").equals("batch")){
 				String result;
