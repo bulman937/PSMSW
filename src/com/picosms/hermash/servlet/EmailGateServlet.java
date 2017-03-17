@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
@@ -38,19 +39,28 @@ public class EmailGateServlet extends HttpServlet {
     private EMailGate gate;
     private String auth_creds;
     private FormatTool ft;
+    
+    
+    /**
+     * Reader of secret file
+     * 
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    
 	public EmailGateServlet() throws FileNotFoundException, IOException {
+		
 		try(BufferedReader br = new BufferedReader(new FileReader("res/email_auth_secret"))) {
 		    StringBuilder sb = new StringBuilder();
 		    String line = br.readLine();
-
 		    while (line != null) {
-		        sb.append(line.trim());
+		        sb.append(line+"\n");
 		        line = br.readLine();
 		    }
 		   auth_creds = sb.toString();
 		}
-	    gate = new EMailGate(new Auth(auth_creds.split(";")[0], 
-					auth_creds.split(";")[1]));
+	    gate = new EMailGate(new Auth(auth_creds.split("\n")[0], 
+							          auth_creds.split("\n")[1]));
 
     }
 
@@ -64,6 +74,8 @@ public class EmailGateServlet extends HttpServlet {
 	}
 
 	/**
+	 * Servlet
+	 * 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	
@@ -71,19 +83,24 @@ public class EmailGateServlet extends HttpServlet {
 		String apiResponce = "";
 		try {
 			if(request.getParameter("type").equals("single")) {
-				apiResponce = gate.sendMessage("hazowskey@gmail.com",
-												request.getParameter("text"), 
-												request.getParameter("tel"));
+				String target = request.getParameter("email");
+				String text = request.getParameter("text");
+				String topic = request.getParameter("topic");
+				apiResponce = gate.sendMessage(target, text, topic);
 			}
 			else if(request.getParameter("type").equals("batch")){
 				String result;
+				String targets = request.getParameter("target");
+				String topic = request.getParameter("topic");
+				String separator = request.getParameter("separator");
 			    InputStream filecontent = null;
 			    final Part filePart = request.getPart("_file");
 			    filecontent = filePart.getInputStream();
 			    BufferedReader br = new BufferedReader(new InputStreamReader(filecontent));
 			    result = br.lines().collect(Collectors.joining("\n"));
-			    ft = new FormatTool(request.getParameter("text"), result);
-			    gate.sendMessageBatch(ft.getByFieldNameStack("email"), ft.formatStack(), ft.getByFieldNameStack("topic"));
+			    ft = new FormatTool(request.getParameter("text"), result, separator);
+			    ArrayList<String> textEntryes = ft.format();
+			    gate.sendMessageBatch(ft.getByFieldName(targets), textEntryes, topic);
 			}
 		} catch (Exception e) {
 				e.printStackTrace();

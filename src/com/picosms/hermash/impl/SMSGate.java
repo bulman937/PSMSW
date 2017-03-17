@@ -7,9 +7,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import org.jsoup.Jsoup;
 
 import com.picosms.hermash.ifaces.IAuth;
 import com.picosms.hermash.tools.Templates;
@@ -65,7 +68,7 @@ public class SMSGate {
 	
 	public String sendSMS(String text, String number) throws Exception {
 		System.out.println(String.format(Templates.SENDSMS, text, number));
-		return sendPost(String.format(Templates.SENDSMS, text, number)).toString();
+		return sendPost(String.format(Templates.SENDSMS,  text, number)).toString();
 	}
 	
 	/**
@@ -111,7 +114,7 @@ public class SMSGate {
 			wr.flush();
 			wr.close();
 			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream()));
+			        new InputStreamReader(con.getInputStream(), "UTF-8"));
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 	

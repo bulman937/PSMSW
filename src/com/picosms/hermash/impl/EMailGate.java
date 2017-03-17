@@ -1,24 +1,33 @@
 package com.picosms.hermash.impl;
 
 import java.util.Properties;
-import java.util.Stack;
-import java.util.Timer;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.mail.*;
 import javax.mail.internet.*;
+
+import org.jsoup.Jsoup;
+
 import javax.mail.Address;
 import com.sun.mail.smtp.*;
 
 
 public class EMailGate{
 	
+	/**
+	 * Stuff for mailx library and auth object
+	 * 
+	 */
 	private Properties props;
 	private Session session;
 	private Auth auth;
+	
+	/**
+	 * Java MailX reques initalization via java.properties
+	 * 
+	 * @param auth
+	 */
 	
 	public EMailGate(Auth auth){
 		this.auth = auth;
@@ -33,29 +42,42 @@ public class EMailGate{
 
 	}
 	
-	public String sendMessageBatch(Stack<String> target, Stack<String> text, Stack<String> topic) {
-		final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-		    service.scheduleWithFixedDelay(new Runnable() {
-		        @Override
-		        public void run()
-		        {
-		          try {
-					sendMessage(target.pop(), text.pop(), topic.pop());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-		        }
-		      }, 0, 20, TimeUnit.SECONDS);
-		
-		return "Added to Queue!";
+	/**
+	 * Batched message sender
+	 * 
+	 * @param target
+	 * @param text
+	 * @param topic
+	 * @return result
+	 * @throws Exception
+	 */
+	
+	public String sendMessageBatch(ArrayList<String> target, ArrayList<String> text, String topic) throws Exception {
+		String output = "";
+		for(int i = 0;i < target.size();i++) {
+			output = output + sendMessage(target.get(i), text.get(i), topic);
+		}
+		return output;
 	}
+	
+	/**
+	 * Send single message
+	 * 
+	 * @param target
+	 * @param text
+	 * @param header
+	 * @return
+	 * @throws Exception
+	 */
 
 	public String sendMessage(String target, String text, String header) throws Exception {
+
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(auth.getUsername(), auth.getPassword());
             }
         });
+        
         Message msg = new MimeMessage(session);
         msg.setFrom(new InternetAddress("test@local.resource"));;
         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(target, false));
@@ -68,7 +90,7 @@ public class EMailGate{
         t.connect("smtp.gmail.com", auth.getUsername(), auth.getPassword());
         t.sendMessage(msg, msg.getAllRecipients());
         t.close();
-		return  t.getLastServerResponse();
+		return t.getLastServerResponse();
 	}
 	
 }

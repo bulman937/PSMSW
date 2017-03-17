@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
@@ -28,7 +29,7 @@ import com.picosms.hermash.tools.FormatTool;
 @MultipartConfig
 public class SMSGateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	
     /**
      * Default constructor. 
      */
@@ -42,14 +43,14 @@ public class SMSGateServlet extends HttpServlet {
 		    String line = br.readLine();
 
 		    while (line != null) {
-		        sb.append(line.trim());
+		        sb.append(line+"\n");
 		        line = br.readLine();
 		    }
 		   auth_creds = sb.toString();
 		}
 		System.out.println(auth_creds);
-        gate = new SMSGate(new Auth(auth_creds.split(";")[0], 
-        							auth_creds.split(";")[1]));
+        gate = new SMSGate(new Auth(auth_creds.split("\n")[0], 
+        							auth_creds.split("\n")[1]));
         buffer = "";
 
     }
@@ -85,18 +86,25 @@ public class SMSGateServlet extends HttpServlet {
 			String apiResponce = "";
 			try {
 				if(request.getParameter("type").equals("single")) {
-					apiResponce = gate.sendSMS(request.getParameter("text"), 
-											   request.getParameter("tel"));
+					String text = request.getParameter("text");
+					String tel = request.getParameter("tel");
+					apiResponce = gate.sendSMS(text, tel);
 				}
 				else if(request.getParameter("type").equals("batch")){
-					String result;
+					String fileresult;
+					String rawText = request.getParameter("text");
+					String targetColunum = request.getParameter("target");
+					String separator = request.getParameter("separator");
 				    InputStream filecontent = null;
 				    final Part filePart = request.getPart("_file");
 				    filecontent = filePart.getInputStream();
 				    BufferedReader br = new BufferedReader(new InputStreamReader(filecontent));
-				    result = br.lines().collect(Collectors.joining("\n"));
-				    ft = new FormatTool(request.getParameter("text"), result);
-				    gate.sendSMSBatch(ft.getByFieldName("number"), ft.format());
+				    fileresult = br.lines().collect(Collectors.joining("\n"));
+				    ft = new FormatTool(rawText, fileresult, separator);
+				    ArrayList<String> numbers = ft.getByFieldName(targetColunum);
+				    ArrayList<String> texts = ft.format();
+				    gate.sendSMSBatch(numbers, texts);
+				    
 				}
 			} catch (Exception e) {
 					e.printStackTrace();

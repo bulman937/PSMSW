@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@page pageEncoding="UTF-8" %>
 <html>
 <head>
 <title>SMS Gate</title>
@@ -78,11 +79,20 @@
             <div class="input-group">
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
+                    
                         Browse&hellip; <input name="_file" type="file" style="display: none;" multiple>
                     </span>
+              
                 </label>
+
                 <input type="text" class="form-control" readonly>
             </div>
+     <label for="separator">Separator:</label>
+     <input name="separator" class="form-control" id="separator" placeholder="Sepearator">
+     <br>
+     <label for="separator">Target</label>
+     <input name="target" class="form-control" id="target" placeholder="Describe target colonum name">
+        
     <label class="control-label">Supports {} by col formatting</label>
     <textarea name="text" class = "form-control" rows = "3"></textarea>
     <br>

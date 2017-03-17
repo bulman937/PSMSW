@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<%@page pageEncoding="UTF-8" %>
 <html>
 <head>
 <title>Email Gate</title>
@@ -54,9 +55,9 @@
   </div>
 </nav>
 <div class="container">
-<h1>Limit ${limit} E-mail's overtime</h1>
+<h1>Email Service</h1>
 ${buffer}
-<h1>Send single SMS</h1>
+<h1>Send single Email</h1>
 
 <form action="email" method="POST" name="singleForm">
 <div class="form-group">
@@ -87,12 +88,19 @@ ${buffer}
                 <input type="text" class="form-control" readonly>
             </div>
     <label class="control-label">Topic</label>            
-    <textarea name="topic" class = "form-control" rows = "1"></textarea>
+
+    <textarea name="topic" placeholder="topic" class = "form-control" rows = "1"></textarea>
+    <br>
+        <label class="control-label">Separator</label>            
+    
+    <input type="text" name="separator" class="form-control" id="separator" placeholder="Sepearator">
+    <input name="target" class="form-control" id="target" placeholder="Describe target colonum name">    
     <br>
     <label class="control-label">Supports {} by col formatting</label>
+    <br>
     <textarea name="text" class = "form-control" rows = "3"></textarea>
     <br>
-	<button type="submit" class="btn btn-success">Submit</button>
+	<button type="submit" onclick="alert('Отправляется...')" class="btn btn-success">Submit</button>
 
 </div>
 </form>
