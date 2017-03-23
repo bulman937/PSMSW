@@ -5,6 +5,7 @@ package com.picosms.hermash.tools;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import com.picosms.hermash.ifaces.IFormatTool;
 
@@ -31,7 +32,7 @@ public class FormatTool implements IFormatTool {
 	public FormatTool(String input, String csv, String separator){	
 		
 		this.input = input.trim();
-		this.separator = separator;
+		this.separator = Pattern.quote(separator);
 		header = new ArrayList<String>();
 		csv = csv.trim();
 		splited = csv.split("\n");

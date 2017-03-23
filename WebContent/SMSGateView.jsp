@@ -50,7 +50,12 @@
 
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Log-out</a></li>
+    <!-- Trigger the modal with a button -->
+		<li><button type="button" class="btn btn-info btn-lg " data-toggle="modal" data-target="#myModal">Log-in</button><li>
+		<li><form action="sms" method="POST">
+		<input name="type" type="hidden" value="logout">
+		<button type="submit"  name="logout" class="btn btn-info btn-lg ">
+		Log-out</button></form><li>
     </ul>
   </div>
 </nav>
@@ -63,11 +68,12 @@
 <div class="form-group">
 	<input name="type" type="hidden" value="single">
     <label for="phone">Phone:</label>
-    <input name="tel" class="form-control" id="phone" placeholder="Enter phone number">
+    <input name="tel" class="form-control" id="phone" placeholder="Enter phone number" ${lock}>
+
     <label for="text">Text:</label>
-    <textarea name="text" class = "form-control" rows = "3"></textarea>
+    <textarea name="text" class = "form-control" rows = "3" ${lock}></textarea>
     <br>
-	<button type="submit" class="btn btn-primary">Submit</button>
+	<button type="submit" class="btn btn-primary" ${lock}>Submit</button>
 </div>
 </form>
 
@@ -80,7 +86,7 @@
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
                     
-                        Browse&hellip; <input name="_file" type="file" style="display: none;" multiple>
+                        Browse&hellip; <input name="_file" type="file" style="display: none;" ${lock} multiple >
                     </span>
               
                 </label>
@@ -88,19 +94,50 @@
                 <input type="text" class="form-control" readonly>
             </div>
      <label for="separator">Separator:</label>
-     <input name="separator" class="form-control" id="separator" placeholder="Sepearator">
+     <input name="separator" class="form-control" id="separator" placeholder="Sepearator" ${lock}>
      <br>
-     <label for="separator">Target</label>
+     <label for="separator" ${lock}>Target</label>
      <input name="target" class="form-control" id="target" placeholder="Describe target colonum name">
         
     <label class="control-label">Supports {} by col formatting</label>
-    <textarea name="text" class = "form-control" rows = "3"></textarea>
+    <textarea name="text" class = "form-control" rows = "3" ${lock}></textarea>
     <br>
-	<button type="submit" class="btn btn-primary">Submit</button>
+	<button type="submit" class="btn btn-primary" ${lock}>Submit</button>
 
 </div>
 </form>
+</div>
 
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Welcome!</h4>
+      </div>
+      <div class="modal-body">
+        <form method="POST" name="login" action="sms" >
+        <div class="form-group">	
+            <input type="hidden" name="type" value="login" />
+            <label class="control-label">Login: </label> 
+	        <input name="username" class="form-control" placeholder="Login">
+	        <br>
+            <label class="control-label">Password: </label> 
+	        <input name="password" class="form-control" placeholder="Password">
+	        <br>	
+         	<button type="submit" class="btn btn-primary">Submit</button>        
+        </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 </body>
 </html>

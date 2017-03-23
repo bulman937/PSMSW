@@ -39,7 +39,7 @@ public class EmailGateServlet extends HttpServlet {
     private EMailGate gate;
     private String auth_creds;
     private FormatTool ft;
-    
+    private boolean isLoggin;
     
     /**
      * Reader of secret file
@@ -49,19 +49,7 @@ public class EmailGateServlet extends HttpServlet {
      */
     
 	public EmailGateServlet() throws FileNotFoundException, IOException {
-		
-		try(BufferedReader br = new BufferedReader(new FileReader("res/email_auth_secret"))) {
-		    StringBuilder sb = new StringBuilder();
-		    String line = br.readLine();
-		    while (line != null) {
-		        sb.append(line+"\n");
-		        line = br.readLine();
-		    }
-		   auth_creds = sb.toString();
-		}
-	    gate = new EMailGate(new Auth(auth_creds.split("\n")[0], 
-							          auth_creds.split("\n")[1]));
-
+		gate = new EMailGate(new Auth());
     }
 
     /**
@@ -69,6 +57,18 @@ public class EmailGateServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		 RequestDispatcher view = request.getRequestDispatcher("EmailGateView.jsp");
+		 try {
+			if(isLoggin) {
+				request.setAttribute("lock", " ");
+				request.setAttribute("buffer", buffer);
+			} else {
+				request.setAttribute("lock", "disabled");
+				request.setAttribute("buffer", "Login to continue");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			;
+		}
 		 view.forward(request, response);  
 
 	}
@@ -80,21 +80,16 @@ public class EmailGateServlet extends HttpServlet {
 	 */
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		String apiResponce = "";
 		try {
 			if(request.getParameter("type").equals("single")) {
-<<<<<<< HEAD
 				String target = request.getParameter("email");
 				String text = request.getParameter("text");
 				String topic = request.getParameter("topic");
 				apiResponce = gate.sendMessage(target, text, topic);
-=======
-				apiResponce = gate.sendMessage(request.getParameter("email"),
-												request.getParameter("text"), 
-												"Topic");
->>>>>>> 3e2096322c255169e189b2a88f8e627f9b80df3b
 			}
-			else if(request.getParameter("type").equals("batch")){
+			if(request.getParameter("type").equals("batch")){
 				String result;
 				String targets = request.getParameter("target");
 				String topic = request.getParameter("topic");
@@ -107,6 +102,19 @@ public class EmailGateServlet extends HttpServlet {
 			    ft = new FormatTool(request.getParameter("text"), result, separator);
 			    ArrayList<String> textEntryes = ft.format();
 			    gate.sendMessageBatch(ft.getByFieldName(targets), textEntryes, topic);
+			}if(request.getParameter("type").equals("login")) {
+				String username = request.getParameter("username");
+				String password = request.getParameter("password");
+				Auth auth = new Auth(username, password);
+				gate.authRenewal(auth);
+				isLoggin = true;
+			}if(request.getParameter("type").equals("logout")) {
+				System.out.println("[DEBUG]: Flushed account!");
+				String username = "";
+				String password = "";
+				Auth auth = new Auth(username, password);
+				gate.authRenewal(auth);
+				isLoggin = false;
 			}
 		} catch (Exception e) {
 				e.printStackTrace();

@@ -52,7 +52,13 @@ public class SMSGate {
 	 */
 	
 	public String getBalance() throws Exception {
+		System.out.println("[DEBUG] User is:"+auth.getUsername());
 		return sendPost(Templates.BALANCE).toString();
+	}
+	
+	
+	public void authRenewal(Auth auth) {
+		this.auth = auth;
 	}
 	
 	

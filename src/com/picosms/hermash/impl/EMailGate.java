@@ -23,11 +23,18 @@ public class EMailGate{
 	private Session session;
 	private Auth auth;
 	
+	public void authRenewal(Auth auth) {
+		this.auth = auth;
+	}
+	
+	
 	/**
 	 * Java MailX reques initalization via java.properties
 	 * 
 	 * @param auth
 	 */
+	
+	
 	
 	public EMailGate(Auth auth){
 		this.auth = auth;
@@ -54,6 +61,7 @@ public class EMailGate{
 	
 	public String sendMessageBatch(ArrayList<String> target, ArrayList<String> text, String topic) throws Exception {
 		String output = "";
+
 		for(int i = 0;i < target.size();i++) {
 			output = output + sendMessage(target.get(i), text.get(i), topic);
 		}
@@ -71,7 +79,7 @@ public class EMailGate{
 	 */
 
 	public String sendMessage(String target, String text, String header) throws Exception {
-
+		System.out.println("[DEBUG]: Sending via " + auth.getUsername());
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(auth.getUsername(), auth.getPassword());
