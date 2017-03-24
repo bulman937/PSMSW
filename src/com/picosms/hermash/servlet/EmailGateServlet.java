@@ -27,19 +27,18 @@ import com.picosms.hermash.tools.FormatTool;
 /**
  * Servlet implementation class SMSGateServlet
  */
-@WebServlet("/email")
-@MultipartConfig
+@WebServlet("/email") //находится по адресу {appname}/email
+@MultipartConfig  //аннотация необходима для чтения файлов из веба
 public class EmailGateServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor. 
      */
-    private String buffer;
-    private EMailGate gate;
-    private String auth_creds;
-    private FormatTool ft;
-    private boolean isLoggin;
+    private String buffer;  //буффер для ответа
+    private EMailGate gate; //используем гейт для отрпавки email
+    private FormatTool ft; //форматтер
+    private boolean isLoggin; //флаг логина
     
     /**
      * Reader of secret file
@@ -49,27 +48,26 @@ public class EmailGateServlet extends HttpServlet {
      */
     
 	public EmailGateServlet() throws FileNotFoundException, IOException {
-		gate = new EMailGate(new Auth());
+		gate = new EMailGate(new Auth()); //Создаем новый гейт с пустой аторизацией
     }
 
     /**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		 RequestDispatcher view = request.getRequestDispatcher("EmailGateView.jsp");
-		 try {
-			if(isLoggin) {
-				request.setAttribute("lock", " ");
-				request.setAttribute("buffer", buffer);
+		 RequestDispatcher view = request.getRequestDispatcher("EmailGateView.jsp"); //указываем что страница email отображает EmailGateView
+		 try {            
+			if(isLoggin) { 
+				request.setAttribute("lock", " ");  //если залогиннен, пооменять все $lock на странице на " "
+				request.setAttribute("buffer", buffer); //и выдать буфер
 			} else {
-				request.setAttribute("lock", "disabled");
-				request.setAttribute("buffer", "Login to continue");
+				request.setAttribute("lock", "disabled");  //если нет, то заблокировать поля ввода
+				request.setAttribute("buffer", "Login to continue"); //и предложить залогинится
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			;
 		}
-		 view.forward(request, response);  
+		 view.forward(request, response);   //отправить все пользователю
 
 	}
 
@@ -81,34 +79,34 @@ public class EmailGateServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		String apiResponce = "";
+		String apiResponce = ""; 
 		try {
-			if(request.getParameter("type").equals("single")) {
-				String target = request.getParameter("email");
-				String text = request.getParameter("text");
+			if(request.getParameter("type").equals("single")) { //если отправлено из формы "single" 
+				String target = request.getParameter("email");  
+				String text = request.getParameter("text");    //получить все прамеетры из полей ввода
 				String topic = request.getParameter("topic");
-				apiResponce = gate.sendMessage(target, text, topic);
+				apiResponce = gate.sendMessage(target, text, topic); //и вызвать sendMessage
 			}
-			if(request.getParameter("type").equals("batch")){
+			if(request.getParameter("type").equals("batch")){  //если отправлено из формы batch
 				String result;
 				String targets = request.getParameter("target");
-				String topic = request.getParameter("topic");
+				String topic = request.getParameter("topic");      //получить все параметры
 				String separator = request.getParameter("separator");
 			    InputStream filecontent = null;
-			    final Part filePart = request.getPart("_file");
+			    final Part filePart = request.getPart("_file"); //и получить файл
 			    filecontent = filePart.getInputStream();
-			    BufferedReader br = new BufferedReader(new InputStreamReader(filecontent));
-			    result = br.lines().collect(Collectors.joining("\n"));
-			    ft = new FormatTool(request.getParameter("text"), result, separator);
-			    ArrayList<String> textEntryes = ft.format();
+			    BufferedReader br = new BufferedReader(new InputStreamReader(filecontent)); 
+			    result = br.lines().collect(Collectors.joining("\n")); //объеденить его в одну строку
+			    ft = new FormatTool(request.getParameter("text"), result, separator); //инициализировать форматтер
+			    ArrayList<String> textEntryes = ft.format(); //и поменять содержимое фигурных скобок на текст
 			    gate.sendMessageBatch(ft.getByFieldName(targets), textEntryes, topic);
 			}if(request.getParameter("type").equals("login")) {
 				String username = request.getParameter("username");
 				String password = request.getParameter("password");
-				Auth auth = new Auth(username, password);
-				gate.authRenewal(auth);
+				Auth auth = new Auth(username, password);  //форма входа
+				gate.authRenewal(auth); //обновить объект авторизации
 				isLoggin = true;
-			}if(request.getParameter("type").equals("logout")) {
+			}if(request.getParameter("type").equals("logout")) { //и выхода
 				System.out.println("[DEBUG]: Flushed account!");
 				String username = "";
 				String password = "";
@@ -120,7 +118,7 @@ public class EmailGateServlet extends HttpServlet {
 				e.printStackTrace();
 			}		
 		buffer = apiResponce;
-		doGet(request, response);
+		doGet(request, response); //затем вернуть пользователю страницу
 		}
 	}
 

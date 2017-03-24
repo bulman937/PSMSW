@@ -52,6 +52,8 @@ public class SMSGateServlet extends HttpServlet {
      * 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	
+	//аналогично прошлому.
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		 RequestDispatcher view = request.getRequestDispatcher("SMSGateView.jsp");
 		 try {
@@ -77,7 +79,7 @@ public class SMSGateServlet extends HttpServlet {
 	 * 
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	
+	//здесь тоже
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 			String apiResponce = "";
 			try {

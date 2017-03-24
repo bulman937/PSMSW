@@ -2,6 +2,8 @@ package com.picosms.hermash.tools;
 
 
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
@@ -16,11 +18,11 @@ import com.picosms.hermash.ifaces.IFormatTool;
  */
 
 public class FormatTool implements IFormatTool {
-	private ArrayList<String> header;
-	private String[] body;
-	private String input;
-	private String[] splited;
-	private String separator;
+	private ArrayList<String> header; //заголовок CSV фала
+	private String[] body;  //тело
+	private String input;   //входящий документ 
+	private String[] splited;  //...разбитый на строки
+	private String separator;  //используя в качеств разделителя
 	
 	/**
 	 * Accepts CSV file with ';' separator
@@ -30,16 +32,16 @@ public class FormatTool implements IFormatTool {
 	 * @param separator 
 	 */
 	public FormatTool(String input, String csv, String separator){	
-		
-		this.input = input.trim();
-		this.separator = Pattern.quote(separator);
-		header = new ArrayList<String>();
-		csv = csv.trim();
-		splited = csv.split("\n");
-		for(String s : splited[0].split(separator)){
+
+		this.input = input.trim();                //обрезаем лишние пробелы и переносы
+		this.separator = Pattern.quote(separator);//делаем так, чтобы разделтиетль не был регулярным выражением
+		header = new ArrayList<String>();         //создаме заголовок
+		csv = csv.trim();                         //отрезаем мусор из входного цсв
+		splited = csv.split("\n");                //режем его построчно
+		for(String s : splited[0].split(separator)){ //делим заголовок на элементы
 			header.add(s);
 		}
-		body = Arrays.copyOfRange(splited, 1, header.size());
+		body = Arrays.copyOfRange(splited, 1, header.size()); //и копируем тело в другое поле
 	}
 	
 	/**
@@ -53,7 +55,7 @@ public class FormatTool implements IFormatTool {
 	public ArrayList<String> getByFieldName(String s){
 		ArrayList<String> output = new ArrayList<String>();
 		for(String element:body){
-			output.add(element.split(separator)[header.indexOf(s)]);
+			output.add(element.split(separator)[header.indexOf(s)]); //смотрим индекс колонки с именем s и возврващем его содержимое(всю колонку)
 		}
 		return output;
 	}
@@ -68,7 +70,7 @@ public class FormatTool implements IFormatTool {
  		
 		for(int i = 0;i<body.length;i++){
 			for(String p:header){
-					input = input.replaceAll("\\{"+p+"\\}", getByFieldName(p).get(i));
+					input = input.replaceAll("\\{"+p+"\\}", getByFieldName(p).get(i)); //заемняем содержимое документа делая все замены
 			}
 			output.add(input);
 			System.out.println(input);

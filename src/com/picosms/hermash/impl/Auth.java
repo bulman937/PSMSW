@@ -60,7 +60,7 @@ public class Auth implements IAuth {
 	
 	@Override
 	public String getHtmlAuthCredentials(){
-		return  "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(
+		return  "Basic " + javax.xml.bind.DatatypeConverter.printBase64Binary(       //"Basic " + username:password
 		        String.format("%s:%s", getUsername(), getPassword()).getBytes());
 				
 	}

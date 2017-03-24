@@ -2,7 +2,7 @@ package com.picosms.hermash.ifaces;
 
 public interface IAuth {
 
-	String getUsername();
+	String getUsername();  
 
 	String getPassword();
 
@@ -15,6 +15,6 @@ public interface IAuth {
 	 * @return Base64encoded string
 	 */
 
-	String getHtmlAuthCredentials();
+	String getHtmlAuthCredentials();  //username:password в base64
 
 }

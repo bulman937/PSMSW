@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Static class for api templates
@@ -21,11 +23,14 @@ public class Templates {
 	public static String SENDSMSBATCH;
 	public static String BATCHENTRY;
 
-	static {
+	static {  //static запускается перед первым созданием объекта
 		BufferedReader br ;
 		try {
+			Path currentRelativePath = Paths.get("");
+			String ss = currentRelativePath.toAbsolutePath().toString();
+			System.out.println("Current relative path is: " + ss);
 			br = new BufferedReader(new FileReader("res/APITemplates"));
-			BALANCE = br.readLine().split(";")[1];
+			BALANCE = br.readLine().split(";")[1];    //затем  вытаскиваем константы из файла
 			SENDSMS = br.readLine().split(";")[1];
 			SENDSMSBATCH = br.readLine().split(";")[1];
 			BATCHENTRY = br.readLine().split(";")[1];

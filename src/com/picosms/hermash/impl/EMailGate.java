@@ -19,9 +19,9 @@ public class EMailGate{
 	 * Stuff for mailx library and auth object
 	 * 
 	 */
-	private Properties props;
-	private Session session;
-	private Auth auth;
+	private Properties props;    //Properties для настройки почты
+	private Session session;     //Cессия отправки сообщения
+	private Auth auth;	         //Объект для авторизации
 	
 	public void authRenewal(Auth auth) {
 		this.auth = auth;
@@ -39,13 +39,12 @@ public class EMailGate{
 	public EMailGate(Auth auth){
 		this.auth = auth;
         props = System.getProperties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "465");
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.auth", "true");                  //установить необходимость авторизации
+        props.put("mail.smtp.host", "smtp.gmail.com");        //... через smtp.gmail.com
+        props.put("mail.smtp.port", "465");                   //... по порту 465
+        props.put("mail.transport.protocol", "smtp");         // ... через smtp
+        props.put("mail.smtp.starttls.enable", "true");       //.. с шифрованием
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); // фабрика сокетов
 
 	}
 	
@@ -80,25 +79,25 @@ public class EMailGate{
 
 	public String sendMessage(String target, String text, String header) throws Exception {
 		System.out.println("[DEBUG]: Sending via " + auth.getUsername());
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(auth.getUsername(), auth.getPassword());
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {  //создаем новую сессию
+            protected PasswordAuthentication getPasswordAuthentication() {             
+                return new PasswordAuthentication(auth.getUsername(), auth.getPassword()); //авторизуемся паролем
             }
         });
         
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress("test@local.resource"));;
-        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(target, false));
-        msg.setSubject(header);
-        msg.setText(text);
-        msg.setHeader("X-Mailer", "picoSMS");
-        msg.setSentDate(new Date());
-        SMTPTransport t =
+        Message msg = new MimeMessage(session);  //cоздаем объект сообщения
+        msg.setFrom(new InternetAddress("test@local.resource"));
+        msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(target, false)); //устанавливаем получателя
+        msg.setSubject(header); //добавляем топик
+        msg.setText(text); //и текст
+        msg.setHeader("X-Mailer", "picoSMS"); //устанавливаем заголовок
+        msg.setSentDate(new Date()); //ставим дату
+        SMTPTransport t = //получем объект транспорта для отправки
             (SMTPTransport)session.getTransport("smtps");
-        t.connect("smtp.gmail.com", auth.getUsername(), auth.getPassword());
-        t.sendMessage(msg, msg.getAllRecipients());
-        t.close();
-		return t.getLastServerResponse();
+        t.connect("smtp.gmail.com", auth.getUsername(), auth.getPassword()); //подключаемся
+        t.sendMessage(msg, msg.getAllRecipients());  //отправляем сообщение
+        t.close(); //закрываем транспорт
+		return t.getLastServerResponse(); //и возвращаем пользователю последнее сообщение сервера
 	}
 	
 }

@@ -25,8 +25,8 @@ import com.picosms.hermash.tools.Templates;
  *
  */
 public class SMSGate {
-	private URL targetAPIURL;
-	private IAuth auth;
+	private URL targetAPIURL;    //URL для API
+	private IAuth auth;          //объект авторизации
 	
 	/**
 	 * Default constuctor that accepts Auth instnace
@@ -35,9 +35,9 @@ public class SMSGate {
 	 */
 	
 	public SMSGate(IAuth auth) {
-		this.auth = auth;
+		this.auth = auth;       
 		try {
-			targetAPIURL = new URL("https://sms-fly.com/api/api.php");
+			targetAPIURL = new URL("https://sms-fly.com/api/api.php"); //URL бросает исключение, потому необходимо его ловить
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -53,12 +53,12 @@ public class SMSGate {
 	
 	public String getBalance() throws Exception {
 		System.out.println("[DEBUG] User is:"+auth.getUsername());
-		return sendPost(Templates.BALANCE).toString();
+		return sendPost(Templates.BALANCE).toString();        //отправляем на api строчку BALANCE из templates
 	}
 	
 	
 	public void authRenewal(Auth auth) {
-		this.auth = auth;
+		this.auth = auth;         //обновить авторизацию
 	}
 	
 	
@@ -73,8 +73,8 @@ public class SMSGate {
 	 */
 	
 	public String sendSMS(String text, String number) throws Exception {
-		System.out.println(String.format(Templates.SENDSMS, text, number));
-		return sendPost(String.format(Templates.SENDSMS,  text, number)).toString();
+		System.out.println(String.format(Templates.SENDSMS, text, number));  
+		return sendPost(String.format(Templates.SENDSMS,  text, number)).toString(); //изменяем SENDSMS, заменяя в нем текст и номер
 	}
 	
 	/**
@@ -91,9 +91,9 @@ public class SMSGate {
 	public String sendSMSBatch(ArrayList<String> number, ArrayList<String> text) throws Exception {
 		String batched = "";
 		for(int i = 0;i<number.size();i++) {
-			batched += String.format(Templates.BATCHENTRY, number.get(i), text.get(i));
+			batched += String.format(Templates.BATCHENTRY, number.get(i), text.get(i)); //форматируем BATCHENTRY добавляя в каждый номер и текст
 		}
-		return sendPost(String.format(Templates.SENDSMSBATCH, batched)).toString();
+		return sendPost(String.format(Templates.SENDSMSBATCH, batched)).toString(); //добавляем в SENDSMSBATCH содержимое BATCHENTRY
 	}
 	
 	/**
@@ -109,27 +109,27 @@ public class SMSGate {
 	
 	
 	private StringBuffer sendPost(String xmlPayload) throws Exception {
-			HttpsURLConnection con = (HttpsURLConnection) targetAPIURL.openConnection();
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Authorization", auth.getHtmlAuthCredentials());
-			System.out.println(String.format("[REQUEST] SEND: %s", xmlPayload));
-			con.setDoInput(true);
-			con.setDoOutput(true);
+			HttpsURLConnection con = (HttpsURLConnection) targetAPIURL.openConnection();  //Создаем новое подключение
+			con.setRequestMethod("POST"); //устанавливаем метод запроса(POST)
+			con.setRequestProperty("Authorization", auth.getHtmlAuthCredentials()); //ставим в свойствах реквеста необходимость авторизации
+			System.out.println(String.format("[REQUEST] SEND: %s", xmlPayload));  
+			con.setDoInput(true); //
+			con.setDoOutput(true);//читаем и пишем данные
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-			wr.write(xmlPayload.getBytes());
-			wr.flush();
-			wr.close();
+			wr.write(xmlPayload.getBytes());  //записываем cообщение для отправку в api
+			wr.flush(); 
+			wr.close(); //и закрыаем поток
 			BufferedReader in = new BufferedReader(
-			        new InputStreamReader(con.getInputStream(), "UTF-8"));
+			        new InputStreamReader(con.getInputStream(), "UTF-8")); //читаем ответ
 			String inputLine;
 			StringBuffer response = new StringBuffer();
 	
 			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
+				response.append(inputLine);  //если он есть, доабавляем построчно
 			}
 			System.out.println(String.format("[REQUEST] GOT: %s", response));
 
-			in.close();
-			return response;
+			in.close(); //закрываем поток чтения
+			return response; //возврващем пользователю резурльтат
 	}
 }
